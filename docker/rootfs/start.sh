@@ -4,13 +4,13 @@
 
 _maxUploadSize() {
     echo "[i] Setting uploadsize to ${MAX_UPLOAD_SIZE}M"
-	
+
 	sed -i "/post_max_size/c\post_max_size=${MAX_UPLOAD_SIZE}M" /etc/php82/php.ini
 	sed -i "/upload_max_filesize/c\upload_max_filesize=${MAX_UPLOAD_SIZE}M" /etc/php82/php.ini
 
     # set error reporting no notices, no warnings
     sed -i "/^error_reporting/c\error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING & ~E_NOTICE" /etc/php82/php.ini
-    
+
 	sed -i -e "s/50M/${MAX_UPLOAD_SIZE}M/g" /etc/nginx/http.d/default.conf
 
     MAX_RAM=$((MAX_UPLOAD_SIZE + 30)) # 30megs more than the upload size
@@ -57,8 +57,6 @@ _buildConfig() {
     echo "define('ENCRYPTION_KEY', '${ENCRYPTION_KEY:-}');"
     echo "define('FFMPEG_BINARY', '${FFMPEG_BINARY:-/usr/bin/ffmpeg}');"
     echo "define('ALWAYS_WEBP', ${ALWAYS_WEBP:-false});"
-    echo "define('ALLOWED_DOMAINS', '${ALLOWED_DOMAINS:-}');"
-    echo "define('SPLIT_DATA_DIR', ${SPLIT_DATA_DIR:-false});"
 }
 
 
@@ -94,3 +92,5 @@ touch /var/log/nginx/pictshare/error.log
 nginx
 
 tail -f /var/log/nginx/pictshare/*.log
+
+# supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
